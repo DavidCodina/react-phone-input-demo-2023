@@ -21,6 +21,6 @@ git add -A
 git commit -m 'deploy'
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:DavidCodina/react-vite-template-2023.git main:gh-pages
+git push -f git@github.com:DavidCodina/react-phone-input-demo-2023.git main:gh-pages
 
 cd -
