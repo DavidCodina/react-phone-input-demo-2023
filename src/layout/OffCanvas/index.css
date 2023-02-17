@@ -1,0 +1,194 @@
+/* Nothing about the CSS uses Tailwind.
+Converting the styles to use the @apply directive with
+Tailwind classes would just be a bunch of extra work. 
+
+The .offcanvas styles are based off of Bootsrap's .offcanvas.
+However, I've stripped it down by removing any responsive classes,
+.offcanvas-header, .offcanvas-body, .offcanvas-title, etc. Additionally, 
+the .offcanvas-backdrop has been baked into the component's logic. The
+associated HTML element is created dynamically and injected into the DOM.*/
+
+/* ======================
+     .close-button
+====================== */
+
+.xx-offcanvas-close-button {
+  -webkit-appearance: button;
+  background: transparent
+    url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e")
+    center/16px auto no-repeat;
+  border: 0;
+  border-radius: 6px;
+  box-sizing: content-box;
+  color: #000;
+  font-family: inherit;
+  font-size: inherit;
+  height: 16px;
+  line-height: inherit;
+  margin: 0;
+  opacity: 0.5;
+  padding: 4px 4px;
+  text-transform: none;
+  width: 16px;
+}
+
+.xx-offcanvas-close-button:not(:disabled) {
+  cursor: pointer;
+}
+
+.xx-offcanvas-close-button:focus:not(:focus-visible) {
+  outline: 0;
+}
+
+.xx-offcanvas-close-button:hover {
+  color: #000;
+  opacity: 1;
+  text-decoration: none;
+}
+
+.xx-offcanvas-close-button:focus {
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.25);
+  opacity: 1;
+  outline: 0;
+}
+
+.xx-offcanvas-close-button:disabled,
+.xx-offcanvas-close-button.disabled {
+  opacity: 0.25;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ======================
+
+====================== */
+
+.xx-offcanvas {
+  --xx-offcanvas-width: 250px;
+  --xx-offcanvas-height: 25vh;
+  --xx-offcanvas-color: ;
+  --xx-offcanvas-bg: #fff;
+  --xx-offcanvas-border-width: 1px;
+  --xx-offcanvas-border-color: rgba(0, 0, 0, 0.175);
+
+  background-clip: padding-box; /*  This slightly changes the way the border looks. */
+  background-color: var(--xx-offcanvas-bg); /* Added */
+  bottom: 0;
+  box-sizing: border-box;
+  color: var(--xx-offcanvas-color);
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  outline: 0;
+  position: fixed;
+  transition: transform 0.3s ease-in-out;
+  visibility: hidden;
+  z-index: 1045;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xx-offcanvas {
+    transition: none;
+  }
+}
+
+/* ======================
+        start
+====================== */
+
+.xx-offcanvas-start {
+  border-right: var(--xx-offcanvas-border-width) solid
+    var(--xx-offcanvas-border-color);
+  left: 0;
+  top: 0;
+  transform: translateX(-100%);
+  width: var(--xx-offcanvas-width);
+}
+
+/* ======================
+          end
+====================== */
+
+.xx-offcanvas-end {
+  border-left: var(--xx-offcanvas-border-width) solid
+    var(--xx-offcanvas-border-color);
+  right: 0;
+  top: 0;
+  transform: translateX(100%);
+  width: var(--xx-offcanvas-width);
+}
+
+/* ======================
+          top
+====================== */
+
+.xx-offcanvas-top {
+  border-bottom: var(--xx-offcanvas-border-width) solid
+    var(--xx-offcanvas-border-color);
+  height: var(--xx-offcanvas-height);
+  left: 0;
+  max-height: 100%;
+  right: 0;
+  top: 0;
+  transform: translateY(-100%);
+}
+
+/* ======================
+          bottom
+====================== */
+
+.xx-offcanvas-bottom {
+  border-top: var(--xx-offcanvas-border-width) solid
+    var(--xx-offcanvas-border-color);
+  height: var(--xx-offcanvas-height);
+  left: 0;
+  max-height: 100%;
+  right: 0;
+  transform: translateY(100%);
+}
+
+/* ======================
+
+====================== */
+
+.xx-offcanvas-showing,
+.xx-offcanvas-show:not(.xx-offcanvas-hiding) {
+  transform: none;
+}
+
+.xx-offcanvas-showing,
+.xx-offcanvas-hiding,
+.xx-offcanvas-show {
+  visibility: visible;
+}
+
+/* ======================
+        keyframes
+====================== */
+
+@keyframes darkenBackground {
+  0% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+@keyframes lightenBackground {
+  0% {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+.xx-offcanvas-bg-darken {
+  animation: darkenBackground 0.75s forwards;
+}
+
+.xx-offcanvas-bg-lighten {
+  animation: lightenBackground 0.75s forwards;
+}

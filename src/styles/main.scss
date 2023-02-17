@@ -1,0 +1,311 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+// Tailwind's base is more than just preflight.css
+// It also includes any base styles defined by the tailwind.config.cjs
+@tailwind base;
+@import './custom-preflight.css';
+
+@tailwind components;
+// @import '../layout/NavBar/navbar.css';
+@import './button.css';
+@import './form.css';
+
+@tailwind utilities;
+
+// @import '../layout/NavBar/navbar.css';
+
+/* ======================
+      Reset Styles
+====================== */
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    // Using smooth as Bootstrap does is annoying for page switches.
+    // Programmaticaly disabling it every time we switch pages is tedious.
+    // If we ever want smooth scroll for a particular page or feature, it's
+    // easier to programmatically opt in, rather than opting out every time.
+    scroll-behavior: auto; // overwrite bootstrap
+  }
+}
+
+html {
+  /* This is generally what Tailwind expects, and what browsers tend
+  to default to. Changing the font-size in the root element (i.e.,
+  the html element will affect every aspect of tailwind that is 
+  relative to rem units.
+  font-size: 1rem; */
+}
+
+///////////////////////////////////////////////////////////////////////////
+//
+// Many of these styles can be moved to the config.
+// Initially, I thought that using Tailwind's official
+// typography plugin would alleviate the need for reset
+// styles. However, it doesn't exactly work like that.
+// It still uses an opt-in .prose class.
+// Technically, Tailwind has base styles:
+//  https://tailwindcss.com/docs/preflight
+//  https://unpkg.com/tailwindcss@3.2.6/src/css/preflight.css
+//
+///////////////////////////////////////////////////////////////////////////
+
+th {
+  text-align: -webkit-match-parent;
+}
+
+/* ======================
+
+====================== */
+
+#root {
+  // align-items: flex-start fixes an issue that occurs in Storybook.
+  // That also uses a #root. If using  align-items: flex-start causes
+  // issues in the actual app, then we can switch to .root (adding it to index.html).
+  // align-items: flex-start; can potentially horizontally squish the child content
+  // if the page component does not have sufficient styles on the top-level wrapper.
+  // For example, the following Tailwind classes: className='2xl:container flex-1 mx-auto w-full p-6'
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.bg-off-white {
+  background-color: #fafafa;
+}
+
+/* ======================
+  Named Color Variants
+====================== */
+/* If you are coming from Bootstrap, you might want to convert  some 
+color classes to Bootstrap-like names. 
+
+  .bg-primary { @apply bg-blue-500; }
+
+  .bg-secondary { @apply bg-gray-500; }
+
+This could be helpful for consistency across the app, and if you ever want 
+to change the colors. I'm not sure how this would work in conjunction with 
+theming. In any case, it seems like a good idea to abstract such variants 
+away from actual colors, so they can be potentially changed at some 
+point in the future. 
+
+Update: Actually, if you wanted to have primary, secondary, success, etc.
+A better way to go is to actually add those names to tailwind.config.js
+theme.extend.colors section. 
+
+See here at 7:45: https://www.youtube.com/watch?v=6UVQlB1eo5A&list=PL4cUxeGkcC9gpXORlEHjc5bgnIi5HEGhw&index=5
+*/
+
+/* ======================
+
+====================== */
+
+.child-mb-1 > * {
+  margin-bottom: 0.25rem !important;
+}
+.child-mb-2 > * {
+  margin-bottom: 0.5rem !important;
+}
+.child-mb-3 > * {
+  margin-bottom: 1rem !important;
+}
+.child-mb-4 > * {
+  margin-bottom: 1.5rem !important;
+}
+.child-mb-5 > * {
+  margin-bottom: 3rem !important;
+}
+
+/* ======================
+    .transition-none 
+====================== */
+
+/* Don't do this. Tailwind already has a transition-none that sets
+transition-property: none; */
+
+// .transition-none * {
+//   -webkit-transition: none !important;
+//   -moz-transition: none !important;
+//   -ms-transition: none !important;
+//   -o-transition: none !important;
+//   transition: none !important;
+// }
+
+/* ======================
+    .hide-scrollbar 
+====================== */
+
+.hide-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ======================
+        .outline
+====================== */
+/* One way to create a text outline is with -webkit-text-stroke-width &
+-webkit-text-stroke-color. The problem there is that it may not be
+applicable to all browsers.
+
+Another approach entails using <svg>s. However, they seem very difficult 
+to manage, and the text doesn't wrap.
+
+  https://www.w3schools.com/graphics/svg_text.asp 
+  https://stackoverflow.com/questions/4919076/outline-effect-to-text 
+
+  <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <svg
+      style={{
+        // display: 'inline-block',
+        fontFamily: 'Luckiest Guy',
+        fontSize: 50,
+        fontWeight: 'bold',
+        lineHeight: 1,
+        margin: '25px auto'
+      }}
+      height='38'
+      width='150'
+    >
+      <text
+        x='0'
+        y='37' // This corresponds to the bottom of the text
+        fill='#fff'
+        stroke='#000'
+        strokeWidth='1px'
+      >
+        Demo
+      </text>
+    </svg>
+  </div>
+
+
+// https://stackoverflow.com/questions/4919076/outline-effect-to-text
+A third approach involve the use of text-shadows. This is the most
+practical approach. For example:
+
+<h1
+  className='outline-strong outline-success outline-width-1 outline-shadow'
+  style={{
+    fontSize: 60,
+    fontWeight: 900,
+    margin: '50px auto',
+    textAlign: 'center'
+  }}
+>Testing</h1>
+*/
+
+// 1x
+.outline-weak {
+  --border-color: #000;
+  --border-width: 1px;
+  color: #fff;
+  text-shadow: var(--border-color) 0px 0px var(--border-width);
+  -webkit-font-smoothing: antialiased;
+}
+
+// 10x
+.outline {
+  --border-color: #000;
+  --border-width: 1px;
+  color: #fff;
+  text-shadow: var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width);
+  -webkit-font-smoothing: antialiased;
+}
+
+// 20x
+.outline-strong {
+  --border-color: #000;
+  --border-width: 1px;
+  color: #fff;
+  text-shadow: var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width),
+    var(--border-color) 0px 0px var(--border-width);
+  -webkit-font-smoothing: antialiased;
+}
+
+// Border colors...
+.outline-primary {
+  --border-color: var(--bs-primary);
+}
+
+.outline-secondary {
+  --border-color: var(--bs-secondary);
+}
+
+.outline-success {
+  --border-color: var(--bs-success);
+}
+
+.outline-info {
+  --border-color: var(--bs-info);
+}
+
+.outline-warning {
+  --border-color: var(--bs-warning);
+}
+
+.outline-danger {
+  --border-color: var(--bs-danger);
+}
+
+.outline-light {
+  --border-color: var(--bs-light);
+}
+
+.outline-dark {
+  --border-color: var(--bs-dark);
+}
+
+// Border widths...
+.outline-width-dot-5 {
+  --border-width: 0.5px;
+}
+
+.outline-width-1 {
+  --border-width: 1px;
+}
+
+.outline-width-1-dot-5 {
+  --border-width: 1.5px;
+}
+
+.outline-width-2 {
+  --border-width: 2px;
+}
+.outline-width-2-dot-5 {
+  --border-width: 2.5px;
+}
+
+.outline-shadow {
+  filter: drop-shadow(0px 1px 0.5px rgba(0, 0, 0, 0.75));
+}
