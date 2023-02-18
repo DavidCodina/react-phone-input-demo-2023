@@ -253,6 +253,15 @@ export type CountryCode =
   | 'ZW'
 
 export interface IInputPhone {
+  /** For !international instances, this flag enables a fallback input that will
+   * render a standard type='tel' input when the initial value is a string with
+   * length > 0, but lacking '+1'. The alternative strategy is to use formatRawValue.
+   */
+  enableFallbackInput?: boolean
+  /** If enableFallbackInput is not true, and formatRawValue is true, then
+   * the '+' or '+1' will be added to any value that is lacking it.
+   */
+  formatRawValue?: boolean
   label?: string
   labelClassName?: string
   labelStyle?: React.CSSProperties
@@ -276,5 +285,6 @@ export interface IInputPhone {
     isCorrectLength: boolean
   ) => void
   placeholder?: string
+
   value: string
 }

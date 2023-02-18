@@ -1,5 +1,5 @@
 // Third-party imports
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 // https://gitlab.com/catamphetamine/react-phone-number-input
 // https://catamphetamine.gitlab.io/react-phone-number-input/
 // https://catamphetamine.gitlab.io/react-phone-number-input/docs/index.html#phoneinputwithcountry
@@ -45,30 +45,38 @@ const InputComponent = React.forwardRef((props: any, ref: any) => {
 ============================================================================= */
 
 const InputPhone = ({
-  label = '',
-  labelClassName = '',
-  labelStyle = {},
-  labelRequired = false,
   countries,
   defaultCountry = '',
   disabled = false,
+  enableFallbackInput = false,
+  formatRawValue = false,
   formGroupClassName = '',
   formGroupStyle = {},
-  inputStyle = {},
   inputClassName = '', // 'form-control form-control-sm',
+  inputStyle = {},
   international = false,
+  label = '',
+  labelClassName = '',
+  labelRequired = false,
+  labelStyle = {},
   onChange,
   placeholder = '',
   value = ''
 }: IInputPhone) => {
-  const country: CountryCode | '' = 'US'
+  const country: CountryCode | undefined = 'US'
 
-  const [countryCode, setCountryCode] = useState<CountryCode | ''>(() => {
-    if (international) {
-      return defaultCountry || ''
+  const [countryCode, setCountryCode] = useState<CountryCode | undefined>(
+    () => {
+      if (international) {
+        return defaultCountry || undefined
+      }
+      return country || undefined
     }
-    return country || ''
-  })
+  )
+
+  const firstRenderRef = useRef(true)
+  const [useFallbackInput, setUseFallbackInput] = useState(false)
+  const [fallbackValue, setFallbackValue] = useState(value)
 
   /* ======================
       Format Raw Value
@@ -118,7 +126,9 @@ const InputPhone = ({
   ///////////////////////////////////////////////////////////////////////////
 
   if (
+    formatRawValue &&
     !international &&
+    !enableFallbackInput &&
     countryCode === 'US' &&
     typeof value === 'string' &&
     value.length > 0
@@ -146,9 +156,41 @@ const InputPhone = ({
 
     const isCorrectLength = isPossiblePhoneNumber(value) // e.g., GB: 01782 849062 would be correct.
     if (typeof onChange === 'function') {
-      onChange(value, countryCallingCode, countryCode, isCorrectLength)
+      const code = countryCode ? countryCode : ''
+      onChange(value, countryCallingCode, code, isCorrectLength)
     }
   }
+
+  /* ======================
+        useEffect()
+  ====================== */
+  // If the consumer passes enableFallback to an instance of InputPhone
+  // that is not international, then on mount this useEffect checks the
+  // initial value. If the initial value is a string, but lacks '+1',
+  // it will setUseFallbackInput(true). This tells renderInput() to use
+  // the fallback <input type='tel' /> with the fallbackValue.
+  // Why are we doing this? It allows us to still render phone numbers
+  // even if they don't match the E164Number format.
+
+  useEffect(() => {
+    if (
+      international ||
+      !firstRenderRef.current ||
+      enableFallbackInput !== true
+    ) {
+      return
+    }
+    firstRenderRef.current = false
+
+    if (
+      typeof value === 'string' &&
+      value.length > 0 &&
+      countryCode === 'US' &&
+      !value.startsWith('+1')
+    ) {
+      setUseFallbackInput(true)
+    }
+  }, [enableFallbackInput, countryCode, international, value])
 
   /* ======================
         renderLabel()
@@ -263,7 +305,36 @@ const InputPhone = ({
       )
     }
 
-    // Otherwise return the normal input
+    if (useFallbackInput) {
+      return (
+        <input
+          autoComplete='off'
+          className={inputClassName}
+          disabled={disabled}
+          onChange={(e) => {
+            const newValue = e.target.value || ''
+
+            let countryCallingCode = ''
+            if (countryCode) {
+              countryCallingCode = getCountryCallingCode(countryCode)
+            }
+
+            const isCorrectLength = isPossiblePhoneNumber(newValue) // e.g., GB: 01782 849062 would be correct.
+            if (typeof onChange === 'function') {
+              const code = countryCode ? countryCode : ''
+              onChange(value, countryCallingCode, code, isCorrectLength)
+              setFallbackValue(newValue)
+            }
+          }}
+          placeholder={placeholder}
+          style={inputStyle}
+          type='tel'
+          value={fallbackValue}
+        />
+      )
+    }
+
+    // Otherwise return PhoneInput
     return (
       <PhoneInput
         autoComplete='off'

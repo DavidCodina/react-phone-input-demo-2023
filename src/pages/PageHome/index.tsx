@@ -44,7 +44,10 @@ const PageHome = () => {
         labelStyle={{}}
         labelRequired
         // disabled
-        // international
+        // Strategy to render number with incorrect raw value. Has precedence over formatRawValue
+        // enableFallbackInput
+        // Other strategy to render number with incorrect raw value.
+        // formatRawValue
         defaultCountry='US'
         formGroupStyle={{ marginBottom: 25, maxWidth: 800 }}
         formGroupClassName='mx-auto shadow-sm'
@@ -66,6 +69,7 @@ const PageHome = () => {
           })
           setPhoneValue(newValue)
         }}
+        placeholder='Phone Number...'
         value={phoneValue}
       />
 
@@ -106,30 +110,51 @@ const PageHome = () => {
         style={{ maxWidth: 800 }}
       >
         <p>
-          <span className='font-bold'>Gotcha:</span> Suppose that{' '}
-          <code>react-phone-number-input</code> is <code>!international</code>,
-          and the country code is set to <code>'US'</code>. In that case, if the
-          initial value (i.e., value on mount) lacks <code>'+1'</code> at first,
-          then <code>react-phone-number-input</code> won't render the value.
-          This is the default behavior of the library.
+          <span className='font-bold text-blue-500'>Gotcha:</span> Suppose that{' '}
+          <code>react-phone-number-input</code> is set to{' '}
+          <code>{`international={false}`}</code>, and the country code is set to{' '}
+          <code>'US'</code>. In that case, if the initial value (i.e., value on
+          mount) lacks <code>'+1'</code>, then{' '}
+          <code>react-phone-number-input</code> won't render the value. This is
+          the default behavior of the library.
         </p>
 
         <p>
-          This might occur in cases where the database previously stored the
-          phone number in a different format, and we're now using
+          This might occur in cases where the database previously stored the{' '}
+          <em>raw value</em> in a different format, and we're now using{' '}
           <code>react-phone-number-input</code> on the client. However, if we're
           trying to render the initial value in an edit form,{' '}
           <em>it will not output</em>.
         </p>
 
-        <p>
-          <span className='font-bold'>Solution:</span> The above component is
-          called <code>InputPhone</code>, and is an abstraction of{' '}
-          <code>react-phone-number-input</code>. <code>InputPhone</code>{' '}
-          observes the [raw] value, and adds <code>'+'</code> or{' '}
-          <code>'+1'</code> to it if it is lacking (when <code>'US'</code>/
-          <code>!international</code>).
+        <p className='mx-10'>
+          <span className='text-blue-500 font-bold'>
+            Solution 1: <code>enableFallbackInput</code>:
+          </span>{' '}
+          The above component is called <code>InputPhone</code>, and is an
+          abstraction of <code>react-phone-number-input</code>. By setting{' '}
+          <code>enableFallbackInput</code> to <code>true</code> it allows{' '}
+          <code>InputPhone</code> to fallback to a standard{' '}
+          <code>{`<input type='tel' />`}</code>.
         </p>
+
+        <p className='mx-10'>
+          <span className='text-blue-500 font-bold'>
+            Solution 2 <code>formatRawValue</code>:
+          </span>{' '}
+          By setting <code>formatRawValue</code> to <code>true</code>,{' '}
+          <code>InputPhone</code> will observe the raw value, and add{' '}
+          <code>'+'</code> or <code>'+1'</code> to it if it is lacking (when{' '}
+          <code>'US'</code>/<code>!international</code>). The <code>'+1'</code>{' '}
+          is never observable in the formatted UI, but will exist on the raw
+          state value. <strong className='text-blue-500'>Note:</strong>{' '}
+          <code>enableFallbackInput</code> has precedence over{' '}
+          <code>formatRawValue</code>. Thus, if both are set to{' '}
+          <code>true</code>, only <code>enableFallbackInput</code> will be
+          implemented.
+        </p>
+
+        <p className='text-center'>---</p>
 
         <p>
           By default, with the international version the number will still
@@ -159,7 +184,7 @@ const PageHome = () => {
         <p>
           Ultimately, it seems preferable to opt for something simpler. For
           example, a basic <code>{`<input type='tel />`}</code> that allows the
-          user to enter whatever they want. Libraries like
+          user to enter whatever they want. Libraries like{' '}
           <code>react-phone-number-input</code> just seem like they have the
           potential to incorrectly alter the user's number. The other solution
           is to <em>always</em> use the international version.
