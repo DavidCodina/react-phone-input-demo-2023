@@ -253,31 +253,37 @@ export type CountryCode =
   | 'ZW'
 
 export interface IInputPhone {
+  countries?: CountryCode[]
+  defaultCountry?: CountryCode | ''
+  disabled?: boolean
   /** For !international instances, this flag enables a fallback input that will
    * render a standard type='tel' input when the initial value is a string with
    * length > 0, but lacking '+1'. The alternative strategy is to use formatRawValue.
    */
   enableFallbackInput?: boolean
+  feedback?: string
   /** If enableFallbackInput is not true, and formatRawValue is true, then
    * the '+' or '+1' will be added to any value that is lacking it.
    */
   formatRawValue?: boolean
-  label?: string
-  labelClassName?: string
-  labelStyle?: React.CSSProperties
-  labelRequired?: boolean
-  countries?: CountryCode[]
-  defaultCountry?: CountryCode | ''
-  disabled?: boolean
-  formGroupStyle?: React.CSSProperties
   formGroupClassName?: string
-  inputStyle?: React.CSSProperties
+  formGroupStyle?: React.CSSProperties
   inputClassName?: string
-  insetLabel?: string
+  inputStyle?: React.CSSProperties
+  international?: boolean
   isInvalid?: boolean // This also allows a function that returns a boolean.
   isValid?: boolean
-  international?: boolean
-
+  label?: string
+  labelClassName?: string
+  labelRequired?: boolean
+  labelStyle?: React.CSSProperties
+  onBlur?: (
+    newValue: string,
+    countryCallingCode: string,
+    countryCode: CountryCode | '',
+    isCorrectLength: boolean,
+    e: React.FocusEvent<HTMLInputElement>
+  ) => void
   onChange: (
     newValue: string,
     countryCallingCode: string,
@@ -285,6 +291,9 @@ export interface IInputPhone {
     isCorrectLength: boolean
   ) => void
   placeholder?: string
-
+  touched?: boolean
   value: string
+  //# formText?: string
+  //# formTextStyle?: React.CSSProperties
+  //# formTextClassName?: string
 }

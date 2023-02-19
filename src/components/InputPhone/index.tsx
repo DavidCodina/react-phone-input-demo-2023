@@ -41,7 +41,7 @@ const InputComponent = React.forwardRef((props: any, ref: any) => {
 })
 
 /* =============================================================================
-                                InputPhone
+                                  InputPhone
 ============================================================================= */
 
 const InputPhone = ({
@@ -49,18 +49,23 @@ const InputPhone = ({
   defaultCountry = '',
   disabled = false,
   enableFallbackInput = false,
+  feedback,
   formatRawValue = false,
   formGroupClassName = '',
   formGroupStyle = {},
   inputClassName = '', // 'form-control form-control-sm',
   inputStyle = {},
   international = false,
+  isValid,
+  isInvalid,
   label = '',
   labelClassName = '',
   labelRequired = false,
   labelStyle = {},
+  onBlur,
   onChange,
   placeholder = '',
+  touched,
   value = ''
 }: IInputPhone) => {
   const country: CountryCode | undefined = 'US'
@@ -77,6 +82,62 @@ const InputPhone = ({
   const firstRenderRef = useRef(true)
   const [useFallbackInput, setUseFallbackInput] = useState(false)
   const [fallbackValue, setFallbackValue] = useState(value)
+
+  /* ======================
+    getInputClassName()
+  ====================== */
+
+  const getInputClassName = () => {
+    let classes = inputClassName ? inputClassName : ''
+
+    // .is-invalid & is-valid are designed to work in conjunction with .form-control.
+    if (isInvalid === true && touched === true) {
+      classes = `is-invalid${inputClassName ? ` ${inputClassName}` : ''}`
+    } else if (isValid === true && touched === true) {
+      classes = `is-valid${inputClassName ? ` ${inputClassName}` : ''}`
+    }
+
+    return classes
+  }
+
+  /* ======================
+      handleChange()
+  ====================== */
+
+  const handleChange = (value: E164Number) => {
+    if (typeof value === 'undefined') {
+      value = ''
+    }
+
+    let countryCallingCode = ''
+    if (countryCode) {
+      countryCallingCode = getCountryCallingCode(countryCode)
+    }
+
+    const isCorrectLength = isPossiblePhoneNumber(value) // e.g., GB: 01782 849062 would be correct.
+    if (typeof onChange === 'function') {
+      const code = countryCode ? countryCode : ''
+      onChange(value, countryCallingCode, code, isCorrectLength)
+    }
+  }
+
+  /* ======================
+        handleBlur()
+  ====================== */
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    let countryCallingCode = ''
+    const isCorrectLength = isPossiblePhoneNumber(value)
+
+    if (countryCode) {
+      countryCallingCode = getCountryCallingCode(countryCode)
+    }
+
+    if (typeof onBlur === 'function') {
+      const code = countryCode ? countryCode : ''
+      onBlur(value, countryCallingCode, code, isCorrectLength, e)
+    }
+  }
 
   /* ======================
       Format Raw Value
@@ -137,27 +198,6 @@ const InputPhone = ({
       value = `+${value}`
     } else if (!value.startsWith('+1')) {
       value = `+1${value}`
-    }
-  }
-
-  /* ======================
-        handleChange()
-  ====================== */
-
-  const handleChange = (value: E164Number) => {
-    if (typeof value === 'undefined') {
-      value = ''
-    }
-
-    let countryCallingCode = ''
-    if (countryCode) {
-      countryCallingCode = getCountryCallingCode(countryCode)
-    }
-
-    const isCorrectLength = isPossiblePhoneNumber(value) // e.g., GB: 01782 849062 would be correct.
-    if (typeof onChange === 'function') {
-      const code = countryCode ? countryCode : ''
-      onChange(value, countryCallingCode, code, isCorrectLength)
     }
   }
 
@@ -279,7 +319,7 @@ const InputPhone = ({
           // them as the value to the associated className and style. Otherwise,
           // it would result in a React error.
           inputStyle={inputStyle}
-          inputClassName={inputClassName}
+          inputClassName={getInputClassName()}
           placeholder={placeholder}
           autoComplete='off'
           defaultCountry={defaultCountry || undefined}
@@ -299,6 +339,7 @@ const InputPhone = ({
               e.preventDefault()
             }
           }}
+          onBlur={handleBlur}
           onChange={handleChange}
           value={value}
         />
@@ -309,8 +350,9 @@ const InputPhone = ({
       return (
         <input
           autoComplete='off'
-          className={inputClassName}
+          className={getInputClassName()}
           disabled={disabled}
+          onBlur={handleBlur}
           onChange={(e) => {
             const newValue = e.target.value || ''
 
@@ -322,7 +364,7 @@ const InputPhone = ({
             const isCorrectLength = isPossiblePhoneNumber(newValue) // e.g., GB: 01782 849062 would be correct.
             if (typeof onChange === 'function') {
               const code = countryCode ? countryCode : ''
-              onChange(value, countryCallingCode, code, isCorrectLength)
+              onChange(newValue, countryCallingCode, code, isCorrectLength)
               setFallbackValue(newValue)
             }
           }}
@@ -338,12 +380,13 @@ const InputPhone = ({
     return (
       <PhoneInput
         autoComplete='off'
-        className={inputClassName}
+        className={getInputClassName()}
         // country: string? — If country is specified then the phone number can only be input in
         // "national" (not "international") format, and will be parsed as a phone number belonging to the country.
         // Must be a supported country code. Example: country="US".
         country={country}
         disabled={disabled}
+        onBlur={handleBlur}
         onChange={handleChange}
         placeholder={placeholder}
         style={inputStyle}
@@ -354,6 +397,24 @@ const InputPhone = ({
   }
 
   /* ======================
+      renderFeedback()
+  ====================== */
+
+  const renderFeedback = () => {
+    if (!touched || !feedback) {
+      return null
+    }
+
+    if (isInvalid === true) {
+      return <div className='block invalid-feedback text-xs'>{feedback}</div>
+    } else if (isValid === true) {
+      return <div className='block valid-feedback text-xs'>{feedback}</div>
+    }
+
+    return null
+  }
+
+  /* ======================
           return
   ====================== */
 
@@ -361,6 +422,7 @@ const InputPhone = ({
     <div style={formGroupStyle} className={formGroupClassName}>
       {renderLabel()}
       {renderInput()}
+      {renderFeedback()}
     </div>
   )
 }
