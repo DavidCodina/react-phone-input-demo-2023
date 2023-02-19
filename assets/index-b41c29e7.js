@@ -1,1 +1,0 @@
-import{u as e,a,j as t,T as s,H as l,W as o}from"./index-31dce62a.js";const i=()=>(e("About"),a("div",{className:"2xl:container flex-1 mx-auto w-full p-6",children:[t(s,{style:{marginBottom:50,textAlign:"center"},children:"About"}),t(l,{style:{marginBottom:50}}),t(o,{})]}));export{i as default};
