@@ -98,6 +98,7 @@ export const InternationalPhoneDemo = () => {
           feedback={phoneError || 'Looks Good!'}
           formGroupClassName=''
           formGroupStyle={{ marginBottom: 15 }}
+          id='international-version'
           inputClassName='form-control form-control-sm'
           inputStyle={{}}
           international
@@ -107,6 +108,7 @@ export const InternationalPhoneDemo = () => {
           labelClassName='text-sm font-bold text-blue-500'
           labelRequired
           labelStyle={{}}
+          name='international-version'
           onBlur={(
             value,
             countryCallingCode,

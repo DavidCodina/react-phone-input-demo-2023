@@ -66,7 +66,8 @@ const InputPhone = ({
   onChange,
   placeholder = '',
   touched,
-  value = ''
+  value = '',
+  ...otherProps
 }: IInputPhone) => {
   const country: CountryCode | undefined = 'US'
 
@@ -237,9 +238,11 @@ const InputPhone = ({
   ====================== */
 
   const renderLabel = () => {
+    const labelProps: any = otherProps?.id ? { htmlFor: otherProps.id } : {}
+
     if (label) {
       return (
-        <label className={labelClassName} style={labelStyle}>
+        <label className={labelClassName} style={labelStyle} {...labelProps}>
           {label}
           {labelRequired && (
             <sup
@@ -266,6 +269,7 @@ const InputPhone = ({
     if (international) {
       return (
         <PhoneInputInternational
+          {...otherProps}
           countries={countries} //If specified, only these countries will be available for selection.
           // By default, an initial value of '+12065554433' or typing '+12065554433'
           // will render as: '+1 206 555 4433'. Setting initialValueFormat='national'
@@ -349,6 +353,7 @@ const InputPhone = ({
     if (useFallbackInput) {
       return (
         <input
+          {...otherProps}
           autoComplete='off'
           className={getInputClassName()}
           disabled={disabled}
@@ -379,6 +384,7 @@ const InputPhone = ({
     // Otherwise return PhoneInput
     return (
       <PhoneInput
+        {...otherProps}
         autoComplete='off'
         className={getInputClassName()}
         // country: string? — If country is specified then the phone number can only be input in

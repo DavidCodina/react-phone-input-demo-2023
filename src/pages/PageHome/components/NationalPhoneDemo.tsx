@@ -101,6 +101,7 @@ export const NationalPhoneDemo = () => {
           // formatRawValue
           formGroupClassName=''
           formGroupStyle={{ marginBottom: 15 }}
+          id='national-version'
           inputClassName='form-control form-control-sm'
           inputStyle={{}}
           isInvalid={phoneError ? true : false}
@@ -109,6 +110,7 @@ export const NationalPhoneDemo = () => {
           labelClassName='text-sm font-bold text-blue-500'
           labelRequired
           labelStyle={{}}
+          name='national-version'
           onBlur={(
             value,
             countryCallingCode,

@@ -252,7 +252,23 @@ export type CountryCode =
   | 'ZM'
   | 'ZW'
 
-export interface IInputPhone {
+// props are omitted either because we don't want the consumer to be able
+// to pass them, or because they are redefined within the interface.
+export interface IInputPhone
+  extends Omit<
+    React.ComponentProps<'input'>,
+    | 'autoComplete'
+    | 'className'
+    | 'disabled'
+    | 'onBlur'
+    | 'onChange'
+    | 'onPaste'
+    | 'placeholder'
+    | 'ref' // react-phone-number-input will complain if not omitted.
+    | 'style'
+    | 'type'
+    | 'value'
+  > {
   countries?: CountryCode[]
   defaultCountry?: CountryCode | ''
   disabled?: boolean
